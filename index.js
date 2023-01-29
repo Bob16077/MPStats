@@ -3,11 +3,11 @@ const schedule = require('node-schedule');
 const getBedrockLB = require('./getBedrockLB.js').execute;
 const getJavaLB = require('./getJavaLB.js').execute;
 
-const blbs = new Enmap({name: 'blbs', dataDir: '/root/data/'});
-const jlbs = new Enmap({name: 'jlbs', dataDir: '/root/data/'});
+const blbs = new Enmap({name: 'blbs', dataDir: '/root/data/mpstats'});
+const jlbs = new Enmap({name: 'jlbs', dataDir: '/root/data/mpstats'});
 const games = new Enmap({
     name: 'games', 
-    dataDir: '/root/data/',
+    dataDir: '/root/data/mpstats',
     autoEnsure: {
         bedrock: [],
         java: [],
@@ -22,7 +22,7 @@ const bCommandLB = new Enmap({
 		'weekly': [],
 		'monthly': [],
 		'yearly': []
-	}, dataDir: '/root/data/'
+	}, dataDir: '/root/data/mpstats'
 });
 
 const jCommandLB = new Enmap({
@@ -33,11 +33,11 @@ const jCommandLB = new Enmap({
 		'weekly': [],
 		'monthly': [],
 		'yearly': []
-	}, dataDir: '/root/data/'
+	}, dataDir: '/root/data/mpstats'
 });
 
 getBedrockLB(games, bCommandLB, 'current');
-getJavaLB(games, jCommandLB, 'current');
+//getJavaLB(games, jCommandLB, 'current');
 
 setInterval(async() => {
     await getBedrockLB(games, bCommandLB, 'current');

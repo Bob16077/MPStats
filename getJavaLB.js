@@ -20,7 +20,6 @@ module.exports = {
                 const refined = refine(res);
                 //console.log(game, !!refined)
                 
-                gameCount++;
                 results[game] = refined;
             } else {
                 results[game] = DB.get('current')[game] || DB.get('daily')[game];

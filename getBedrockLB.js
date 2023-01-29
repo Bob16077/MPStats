@@ -21,6 +21,7 @@ module.exports = {
                 
                 results[game] = refined;
             } else {
+                console.log(DB.get('current')[game], game)
                 results[game] = DB.get('current')[game] || DB.get('daily')[game];
             };
         
