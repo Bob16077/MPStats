@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { JSDOM } = require("jsdom");
+const Enmap = require('enmap');
 
 module.exports = {
     async execute(gamesDB, DB, time) {
@@ -20,9 +21,9 @@ module.exports = {
                 const refined = refine(res);
                 //console.log(game, !!refined)
                 
-                results[game] = refined;
+                results[String(game)] = refined;
             } else {
-                results[game] = DB.get('current')[game] || DB.get('daily')[game];
+                results[String(game)] = new Enmap({name: 'jCommandLB', dataDir: '/root/data/mpstats'}).get('current')[game] || new Enmap({name: 'jCommandLB', dataDir: '/root/data/mpstats'}).get('daily')[game];
             };
 
             gameCount++;
@@ -30,8 +31,7 @@ module.exports = {
             if (gameCount == gamesList.length) {
                 results.time = Date.now();
                 setTimeout(() => {
-                    DB.set(time, results);
-
+                    DB.set(String(time), results);
                     console.log(`Got java LB at ${time} - ${new Date().toLocaleString()}.`);
                 }, 500);
             }

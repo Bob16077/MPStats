@@ -1,11 +1,16 @@
 const axios = require('axios');
+const Enmap = require('enmap');
 const { JSDOM } = require("jsdom");
 
 module.exports = {
     async execute(gamesDB, DB, time) {
         let results = {};
         let gameCount = 0;
-        if (!time) time = Date.now();
+        let blbs = false;
+        if (!time) {
+            time = Date.now();
+            blbs = true;
+        }
 
         const gamesList = await gamesDB.get('bedrock');
 
@@ -19,10 +24,9 @@ module.exports = {
                 let res = res1.data;
                 const refined = refine(res);
                 
-                results[game] = refined;
+                results[String(game)] = refined;
             } else {
-                console.log(DB.get('current')[game], game)
-                results[game] = DB.get('current')[game] || DB.get('daily')[game];
+                results[String(game)] = new Enmap({name: 'bCommandLB', dataDir: '/root/data/mpstats'}).get('current')[game] || new Enmap({name: 'bCommandLB', dataDir: '/root/data/mpstats'}).get('daily')[game];
             };
         
             gameCount++;
@@ -30,7 +34,7 @@ module.exports = {
             if (gameCount == gamesList.length) {
                 results.time = Date.now();
                 setTimeout(() => {
-                    DB.set(time, results);
+                    DB.set(String(time), results);
                     console.log(`Got bedrock LB at ${time} - ${new Date().toLocaleString()}.`);
                 }, 500);
             }
