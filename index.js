@@ -3,6 +3,18 @@ const schedule = require('node-schedule');
 const getBedrockLB = require('./getBedrockLB.js').execute;
 const getJavaLB = require('./getJavaLB.js').execute;
 
+const getLbData = (query, value) => {
+    return new Promise((resolve, reject) => {
+        client.query(query, [value], (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        });
+    });
+};
+
 const blbs = new Enmap({name: 'blbs', dataDir: '/root/data/mpstats'});
 const jlbs = new Enmap({name: 'jlbs', dataDir: '/root/data/mpstats'});
 const games = new Enmap({
@@ -98,23 +110,24 @@ schedule.scheduleJob('0 0 1 1 *', async () => {
 });
 
 
-const jgames = require('../PostgreSQL/dbdata/bgames.json');
-const jlbids = require('../PostgreSQL/dbdata/jlbids.json');
-const jplayers = require('../PostgreSQL/dbdata/bplayers.json');
+// const jgames = require('../PostgreSQL/dbdata/jgames.json');
+// const jlbids = require('../PostgreSQL/dbdata/jlbids.json');
+// const jplayers = require('../PostgreSQL/dbdata/jplayers.json');
+// const jlbfiles = require('../PostgreSQL/dbdata/jlbfiles.json');
 
-const { Client } = require('pg');
+// const { Client } = require('pg');
 
-const client = new Client({
-  host: 'localhost',
-  port: '5432',
-  user: 'postgres',
-  password: 'mwt@N3TzV@bmrfj!',
-  database: 'tsdb'
-});
+// const client = new Client({
+//   host: 'localhost',
+//   port: '5432',
+//   user: 'postgres',
+//   password: 'mwt@N3TzV@bmrfj!',
+//   database: 'tsdb'
+// });
 
-client.connect();
+// client.connect();
 
-json(); //convert json data from timmi's bot to my format
+//json(); //convert json data from timmi's bot to my format
 
 async function json() {
 	const timestamps = [];
@@ -135,10 +148,11 @@ async function json() {
     }, {});
 
     let uniqueTimestamps = Object.values(uniqueDates).sort((a, b) => a - b);
-    console.log(uniqueTimestamps);
+    
 
 	let lbs = {};
-    uniqueTimestamps.length =2
+    uniqueTimestamps = [uniqueTimestamps[uniqueTimestamps.length - 2]]
+    console.log(uniqueTimestamps);
 
     //console.log(uniqueTimestamps.map(date => date.toLocaleString()).join('\n')) //view all uniqueTimestamps in console
 	
@@ -155,6 +169,7 @@ async function json() {
 			const providedTimestamp = time.toString();
 			const providedValue = gameId;
 			let dataFromDB = jlbids.reduce((acc, obj) => {
+
                 if (obj.leaderboard_id !== providedValue) {
                     return acc;
                 }
@@ -169,22 +184,28 @@ async function json() {
                 return acc;
             }, jlbids[0]);
 
-            //console.log(dataFromDB)
+            console.log(dataFromDB);
+            return
 
 			//let gameFromDB = bgames.find(object => object.id == gameId)?.clean_name;
 			if (game == null || !games.get('java')) console.log(gameId)
-			const lbId = dataFromDB.id;
+			const lbId = dataFromDB.leaderboard_id;
 
             const query = `SELECT * FROM java.leaderboard_saves WHERE leaderboard_save_id = $1`;
             const value = lbId + 1;
             let rawLb = [];
 
-            client.query(query, [value], async (err, res) => {
+            // const rawLbData = await getLbData(query, value);
+            // await rawLbData.rows.forEach(row => {
+            //     rawLb.push({position: null, username: jplayers.find(player => player.id == row.player_id)?.player_name, wins: row.score});
+            // })
+            console.log(rawLb)
+            await client.query(query, [value], async (err, res) => {
                 if (err) {
-                  console.log(err.stack)
+                  console.log("error" + err.stack)
                 } else {
                     res.rows.forEach(row => {
-                        rawLb.push({position: null, username: jplayers.find(player => player.id == row.player_id).player_name, wins: row.score});
+                        rawLb.push({position: null, username: jplayers.find(player => player.id == row.player_id)?.player_name, wins: row.score});
                     });
                 }
             });
@@ -194,7 +215,7 @@ async function json() {
             setTimeout(() => {
                 lb[game] = rawLb;
 			    lb[game] = lb[game].sort((a, b) => b.wins - a.wins).map((object, index) => (object.position = index + 1, object)); //currently uses the same lb id for all games at the same timestamp
-                console.log(dataFromDB, game, lb[game].toString().slice(0, 15))
+                console.log(dataFromDB, game, lb[game])
             }, 500);
 		}
 		lbs[time.getTime()] = lb;
@@ -210,3 +231,4 @@ async function json() {
 
 	console.log(`Converted all ${Object.keys(lbs).length} bedrock leaderboards`);
 };
+
