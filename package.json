@@ -20,7 +20,6 @@
     "axios": "^1.2.4",
     "enmap": "^5.9.5",
     "jsdom": "^21.1.0",
-    "node-schedule": "^2.1.1",
-    "pg": "^8.9.0"
+    "node-schedule": "^2.1.1"
   }
 }

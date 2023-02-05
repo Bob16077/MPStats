@@ -3,103 +3,38 @@ const schedule = require('node-schedule');
 const getBedrockLB = require('./getBedrockLB.js').execute;
 const getJavaLB = require('./getJavaLB.js').execute;
 
-const blbs = new Enmap({name: 'blbs', dataDir: '/root/data/mpstats'});
-const jlbs = new Enmap({name: 'jlbs', dataDir: '/root/data/mpstats'});
-const games = new Enmap({
-    name: 'games', 
-    dataDir: '/root/data/mpstats',
-    autoEnsure: {
-        bedrock: [],
-        java: [],
-    }
-});
-
-const bCommandLB = new Enmap({
-	name: 'bCommandLB',
-	autoEnsure: {
-		'current': [],
-		'daily': [],
-		'weekly': [],
-		'monthly': [],
-		'yearly': []
-	}, dataDir: '/root/data/mpstats'
-});
-
-const jCommandLB = new Enmap({
-	name: 'jCommandLB', 
-	autoEnsure: {
-		'current': [],
-		'daily': [],
-		'weekly': [],
-		'monthly': [],
-		'yearly': []
-	}, dataDir: '/root/data/mpstats'
-});
-
-convert(); //from old DB format to new
+//convert(); //from old DB format to new
 
 async function convert() {
     const lb = JSON.parse(new Enmap({name: 'lbs', dataDir: '/root/Bots/StatsBot/data'}).export()).keys;
 
 	lb.forEach(key => {
-		bCommandLB.set('current', key.value, key.key)
+		blbs.set('1675584000000', key.value, key.key)
 		console.log(key.key, key.value)
 	})
 };
 
-getBedrockLB(games, bCommandLB, 'current');
-getJavaLB(games, jCommandLB, 'current');
+console.log('\x1b[32m');
+console.log('MPStats module started.\nBeginning log of bedrock and java stats from ' + new Date().toDateString() + ', ' + new Date().toLocaleTimeString());
 
-setInterval(async() => {
-    await getBedrockLB(games, bCommandLB, 'current');
+getBedrockLB('current');
+getJavaLB('current');
+
+setInterval(() => {
+    getBedrockLB('current');
 }, 900000);
 
-setInterval(async() => {
-    await getJavaLB(games, jCommandLB, 'current');
-}, 3600000);
+setInterval(() => {
+    getJavaLB('current');
+}, 3000000);
 
-setInterval(async() => {
-    process.exit();
-}, 3590000)
-
-schedule.scheduleJob('50 23 * * *', () => { 
-    console.log('daily1')
-    getBedrockLB(games, blbs);
-    getJavaLB(games, jlbs);
-});
-
-schedule.scheduleJob('0 0 * * *', () => { 
-    console.log('daily2')
+schedule.scheduleJob('1 0 * * *', async () => {
+    console.log('Daily routine triggered');
+    getBedrockLB().then(() => setTimeout(() => getJavaLB(), 30000))
     setTimeout(() => {
-        getBedrockLB(games, bCommandLB, 'daily');
-        getJavaLB(games, jCommandLB, 'daily');
-    }, 60000);
-});
-
-schedule.scheduleJob('30 23 * * 6', () => {
-    setTimeout(async () => {
-        await getBedrockLB(games, bCommandLB, 'weekly');
-        await getJavaLB(games, jCommandLB, 'weekly');
-    });
-});
-
-schedule.scheduleJob('0 0 0 * *', () => {
-    setTimeout(async () => {
-        await getBedrockLB(games, bCommandLB, 'monthly');
-        await getJavaLB(games, jCommandLB, 'monthly');
-    }, 60000);
-});
-
-schedule.scheduleJob('0 0 1 1 *', async () => {
-    const bedrock = await bCommandLB.get('yearly');
-    const java = await jCommandLB.get('yearly');
-    await blbs.set(new Date().getFullYear() - 1, bedrock);
-    await jlbs.set(new Date().getFullYear() - 1, java);
-
-    setTimeout(async () => {
-        await getBedrockLB(games, bCommandLB, 'yearly');
-        await getJavaLB(games, jCommandLB, 'yearly');
-    }, 120000);
+        console.log('Scheduled restart: daily');
+        process.exit();
+    }, 300000);
 });
 
 
