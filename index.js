@@ -3,18 +3,6 @@ const schedule = require('node-schedule');
 const getBedrockLB = require('./getBedrockLB.js').execute;
 const getJavaLB = require('./getJavaLB.js').execute;
 
-const getLbData = (query, value) => {
-    return new Promise((resolve, reject) => {
-        client.query(query, [value], (err, res) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(res);
-            }
-        });
-    });
-};
-
 const blbs = new Enmap({name: 'blbs', dataDir: '/root/data/mpstats'});
 const jlbs = new Enmap({name: 'jlbs', dataDir: '/root/data/mpstats'});
 const games = new Enmap({
@@ -48,22 +36,19 @@ const jCommandLB = new Enmap({
 	}, dataDir: '/root/data/mpstats'
 });
 
-//const lbs2021 = new Enmap({name: 'lbs2021', dataDir: '/root/data/mpstats'}); //updated 1/28, waiting for blbs to get lbs2021
-//const lbs2022 = new Enmap({name: 'lbs2022', dataDir: '/root/data/mpstats'});
-
-//convert(); //from old DB format to new
+convert(); //from old DB format to new
 
 async function convert() {
-    const lb = JSON.parse(new Enmap({name: 'dailyLB', dataDir: '/root/Bots/StatsBot/data'}).export()).keys;
+    const lb = JSON.parse(new Enmap({name: 'lbs', dataDir: '/root/Bots/StatsBot/data'}).export()).keys;
 
 	lb.forEach(key => {
-		bCommandLB.set('daily', key.value, key.key)
+		bCommandLB.set('current', key.value, key.key)
 		console.log(key.key, key.value)
 	})
 };
 
-//getBedrockLB(games, bCommandLB, 'current');
-//getJavaLB(games, jCommandLB, 'current');
+getBedrockLB(games, bCommandLB, 'current');
+getJavaLB(games, jCommandLB, 'current');
 
 setInterval(async() => {
     await getBedrockLB(games, bCommandLB, 'current');
@@ -71,15 +56,23 @@ setInterval(async() => {
 
 setInterval(async() => {
     await getJavaLB(games, jCommandLB, 'current');
-}, 1800000);
+}, 3600000);
+
+setInterval(async() => {
+    process.exit();
+}, 3590000)
+
+schedule.scheduleJob('50 23 * * *', () => { 
+    console.log('daily1')
+    getBedrockLB(games, blbs);
+    getJavaLB(games, jlbs);
+});
 
 schedule.scheduleJob('0 0 * * *', () => { 
-    setTimeout(async () => {
-        await getBedrockLB(games, blbs);
-        await getJavaLB(games, jlbs);
-
-        await getBedrockLB(games, bCommandLB, 'daily');
-        await getJavaLB(games, jCommandLB, 'daily');
+    console.log('daily2')
+    setTimeout(() => {
+        getBedrockLB(games, bCommandLB, 'daily');
+        getJavaLB(games, jCommandLB, 'daily');
     }, 60000);
 });
 
@@ -110,28 +103,16 @@ schedule.scheduleJob('0 0 1 1 *', async () => {
 });
 
 
-// const jgames = require('../PostgreSQL/dbdata/jgames.json');
-// const jlbids = require('../PostgreSQL/dbdata/jlbids.json');
-// const jplayers = require('../PostgreSQL/dbdata/jplayers.json');
-// const jlbfiles = require('../PostgreSQL/dbdata/jlbfiles.json');
-
-// const { Client } = require('pg');
-
-// const client = new Client({
-//   host: 'localhost',
-//   port: '5432',
-//   user: 'postgres',
-//   password: 'mwt@N3TzV@bmrfj!',
-//   database: 'tsdb'
-// });
-
-// client.connect();
+//const bgames = require('../PostgreSQL/dbdata/bgames.json');
+//const blbFiles = require('../PostgreSQL/dbdata/blbs.json');
+//const blbids = require('../PostgreSQL/dbdata/blbids.json');
+//const bplayers = require('../PostgreSQL/dbdata/bplayers.json');
 
 //json(); //convert json data from timmi's bot to my format
 
 async function json() {
 	const timestamps = [];
-	for (const leaderboard of jlbids) {
+	for (const leaderboard of blbids) {
 		const time = new Date(leaderboard.save_time);
 		timestamps.push(time);
 	};
@@ -148,28 +129,24 @@ async function json() {
     }, {});
 
     let uniqueTimestamps = Object.values(uniqueDates).sort((a, b) => a - b);
-    
 
 	let lbs = {};
-    uniqueTimestamps = [uniqueTimestamps[uniqueTimestamps.length - 2]]
-    console.log(uniqueTimestamps);
 
     //console.log(uniqueTimestamps.map(date => date.toLocaleString()).join('\n')) //view all uniqueTimestamps in console
 	
 	for (const timestamp of uniqueTimestamps) {
 		let lb = {};
-		let exactTime = jlbids.find(object => new Date(object.save_time).getTime() == timestamp.getTime()).save_time;
+		let exactTime = blbids.find(object => new Date(object.save_time).getTime() == timestamp.getTime()).save_time;
 		const time = new Date(exactTime);
 
-		for (let gameObject of games.get('java')) {	
+		for (let gameObject of games.get('bedrock')) {	
             let game = gameObject.name;
 			//const gameTime = getClosestDate(timestamps.map(a => new Date(a).getTime()), timestamp.getTime());
-			const gameId = jgames.find(object => object.clean_name == game)?.id;
+			const gameId = bgames.find(object => object.clean_name == game)?.id;
 
 			const providedTimestamp = time.toString();
 			const providedValue = gameId;
-			let dataFromDB = jlbids.reduce((acc, obj) => {
-
+			let dataFromDB = blbids.reduce((acc, obj) => {
                 if (obj.leaderboard_id !== providedValue) {
                     return acc;
                 }
@@ -182,53 +159,28 @@ async function json() {
                     return obj;
                 }
                 return acc;
-            }, jlbids[0]);
+            }, blbids[0]);
 
-            console.log(dataFromDB);
-            return
+            //console.log(dataFromDB)
 
 			//let gameFromDB = bgames.find(object => object.id == gameId)?.clean_name;
-			if (game == null || !games.get('java')) console.log(gameId)
-			const lbId = dataFromDB.leaderboard_id;
-
-            const query = `SELECT * FROM java.leaderboard_saves WHERE leaderboard_save_id = $1`;
-            const value = lbId + 1;
-            let rawLb = [];
-
-            // const rawLbData = await getLbData(query, value);
-            // await rawLbData.rows.forEach(row => {
-            //     rawLb.push({position: null, username: jplayers.find(player => player.id == row.player_id)?.player_name, wins: row.score});
-            // })
-            console.log(rawLb)
-            await client.query(query, [value], async (err, res) => {
-                if (err) {
-                  console.log("error" + err.stack)
-                } else {
-                    res.rows.forEach(row => {
-                        rawLb.push({position: null, username: jplayers.find(player => player.id == row.player_id)?.player_name, wins: row.score});
-                    });
-                }
-            });
+			if (game == null || !games.get('bedrock')) console.log(gameId)
+			const lbId = dataFromDB.id;
+			const rawLb = blbFiles.filter(object => object.leaderboard_save_id == lbId);
 
 			lb[game] = [];
 
-            setTimeout(() => {
-                lb[game] = rawLb;
-			    lb[game] = lb[game].sort((a, b) => b.wins - a.wins).map((object, index) => (object.position = index + 1, object)); //currently uses the same lb id for all games at the same timestamp
-                console.log(dataFromDB, game, lb[game])
-            }, 500);
+			for (const row of rawLb) {
+				lb[game].push({position: null, username: bplayers.find(player => player.id == row.player_id).player_name, wins: row.score});
+			};
+
+			lb[game] = lb[game].sort((a, b) => b.wins - a.wins).map((object, index) => (object.position = index + 1, object));
+			//lb[game] = lb[game].slice(0, 2);
 		}
 		lbs[time.getTime()] = lb;
 		//console.log(time.getTime(), lb.toString().slice(0, 15));
-
-
-        //console.log('Number ' + Object.keys(lbs).length + ' on ' + time.toLocaleString()); need to uncomment
-
-
-		//blbs.set(String(time.getTime()), lb)
+        console.log('Number ' + Object.keys(lbs).length + ' on ' + time.toLocaleString());
+		blbs.set(String(time.getTime()), lb)
 	};
-
-
 	console.log(`Converted all ${Object.keys(lbs).length} bedrock leaderboards`);
 };
-
