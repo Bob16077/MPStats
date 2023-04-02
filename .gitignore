@@ -1,3 +1,6 @@
 node_modules/
 package-lock.json
 data/
+test.js
+getBedrockLB.js
+getJavaLB.js

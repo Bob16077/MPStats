@@ -1,0 +1,394 @@
+{
+    "bedrock": [
+        {
+            "name":"Block Hunt",
+            "active":true
+        },
+        {
+            "name":"Bomb Lobbers",
+            "active":true
+        },
+        {
+            "name":"Cake Wars",
+            "active":true
+        },
+        {
+            "name":"Cake Wars Duos",
+            "active":true
+        },
+        {
+            "name":"Cake Wars Mega",
+            "active":false
+        },
+        {
+            "name":"Cake Wars Solos",
+            "active":true
+        },
+        {
+            "name":"Castle Defense",
+            "active":false
+        },
+        {
+            "name":"Christmas 2016",
+            "active":false
+        },
+        {
+            "name":"Death Tag",
+            "active":false
+        },
+        {
+            "name":"Dragon Escape",
+            "active":false
+        },
+        {
+            "name":"Dragons",
+            "active":true
+        },
+        {
+            "name":"Gladiators",
+            "active":false
+        },
+        {
+            "name":"Master Builders",
+            "active":true
+        },
+        {
+            "name":"Micro Battle",
+            "active":true
+        },
+        {
+            "name":"Mob Arena",
+            "active":true
+        },
+        {
+            "name":"Old Castle Defense",
+            "active":false
+        },
+        {
+            "name":"Quiver",
+            "active":false
+        },
+        {
+            "name":"Skyfall",
+            "active":false
+        },
+        {
+            "name":"Skyfall Teams",
+            "active":false
+        },
+        {
+            "name":"Skywars",
+            "active":true
+        },
+        {
+            "name":"Skywars Teams",
+            "active":true
+        },
+        {
+            "name":"Snow Fight",
+            "active":false
+        },
+        {
+            "name":"Speed Builders",
+            "active":true
+        },
+        {
+            "name":"Survival Games",
+            "active":false
+        },
+        {
+            "name":"Survival Games Teams",
+            "active":false
+        },
+        {
+            "name":"Turf Wars",
+            "active":true
+        },
+        {
+            "name":"Death Run",
+            "active":true
+        }
+        ],
+    "java": [
+        {
+            "name":"Area 51 Raid",
+            "active":false
+        },
+        {
+            "name":"Alien Invasion",
+            "active":false
+        },
+        {
+            "name":"Bacon Brawl",
+            "active":true
+        },
+        {
+            "name":"Battle Royale",
+            "active":false
+        },
+        {
+            "name":"Bawk Bawk Battles",
+            "active":false
+        },
+        {
+            "name":"Block Hunt",
+            "active":true
+        },
+        {
+            "name":"Bomb Lobbers",
+            "active":true
+        },
+        {
+            "name":"Brawl",
+            "active":false
+        },
+        {
+            "name":"Cake Wars Standard",
+            "active":true
+        },
+        {
+            "name":"Cake Wars Duos",
+            "active":true
+        },
+        {
+            "name":"Castle Assault",
+            "active":false
+        },
+        {
+            "name":"Castle Assault TDM",
+            "active":false
+        },
+        {
+            "name":"Castle Siege",
+            "active":false
+        },
+        {
+            "name":"Champions CTF",
+            "active":true
+        },
+        {
+            "name":"Champions Domination",
+            "active":true
+        },
+        {
+            "name":"Champions TDM",
+            "active":false
+        },
+        {
+            "name":"Christmas Chaos",
+            "active":false
+        },
+        {
+            "name":"Christmas Chaos II",
+            "active":true
+        },
+        {
+            "name":"Death Tag",
+            "active":true
+        },
+        {
+            "name":"Dragon Escape",
+            "active":true
+        },
+        {
+            "name":"Dragons",
+            "active":true
+        },
+        {
+            "name":"Draw my Thing",
+            "active":true
+        },
+        {
+            "name":"Evolution",
+            "active":true
+        },
+        {
+            "name":"Gladiators",
+            "active":true
+        },
+        {
+            "name":"Gravity",
+            "active":false
+        },
+        {
+            "name":"Halloween Havoc",
+            "active":false
+        },
+        {
+            "name":"Halloween Horror",
+            "active":false
+        },
+        {
+            "name":"Heroes of GWEN",
+            "active":false
+        },
+        {
+            "name":"Hoops",
+            "active":false
+        },
+        {
+            "name":"Master Builders",
+            "active":true
+        },
+        {
+            "name":"MC League",
+            "active":false
+        },
+        {
+            "name":"Micro Battle",
+            "active":true
+        },
+        {
+            "name":"Milk the Cow",
+            "active":true
+        },
+        {
+            "name":"Minestrike",
+            "active":true
+        },
+        {
+            "name":"Mineware",
+            "active":false
+        },
+        {
+            "name":"Monster Maze",
+            "active":true
+        },
+        {
+            "name":"Nano Games",
+            "active":true
+        },
+        {
+            "name":"One in the Quiver",
+            "active":true
+        },
+        {
+            "name":"One in the Quiver Payload",
+            "active":false
+        },
+        {
+            "name":"Rose Rush",
+            "active":false
+        },
+        {
+            "name":"Runner",
+            "active":true
+        },
+        {
+            "name":"Search and Destroy",
+            "active":false
+        },
+        {
+            "name":"Sheep Quest",
+            "active":true
+        },
+        {
+            "name":"Skyfall",
+            "active":false
+        },
+        {
+            "name":"Skyfall Teams",
+            "active":false
+        },
+        {
+            "name":"Skywars",
+            "active":true
+        },
+        {
+            "name":"Skywars Teams",
+            "active":true
+        },
+        {
+            "name":"Snake",
+            "active":true
+        },
+        {
+            "name":"Sneaky Assassins",
+            "active":true
+        },
+        {
+            "name":"Snow Fight",
+            "active":false
+        },
+        {
+            "name":"Speed Builders",
+            "active":true
+        },
+        {
+            "name":"Strike Games",
+            "active":false
+        },
+        {
+            "name":"Squid Shooter",
+            "active":true
+        },
+        {
+            "name":"Super Paintball",
+            "active":true
+        },
+        {
+            "name":"Super Smash Mobs",
+            "active":true
+        },
+        {
+            "name":"Super Smash Mobs Teams",
+            "active":true
+        },
+        {
+            "name":"Super Spleef",
+            "active":true
+        },
+        {
+            "name":"Survival Games",
+            "active":true
+        },
+        {
+            "name":"Survival Games Teams",
+            "active":true
+        },
+        {
+            "name":"The Bridges",
+            "active":true
+        },
+        {
+            "name":"Tug of Wool",
+            "active":true
+        },
+        {
+            "name":"Turf Wars",
+            "active":true
+        },
+        {
+            "name":"Type Wars",
+            "active":false
+        },
+        {
+            "name":"Ultra Hardcore",
+            "active":false
+        },
+        {
+            "name":"Ultra Hardcore Solo",
+            "active":false
+        },
+        {
+            "name":"Ultra Hardcore Solo Speed",
+            "active":false
+        },
+        {
+            "name":"Ultra Hardcore Teams Speed",
+            "active":false
+        },
+        {
+            "name":"Valentines Vendetta",
+            "active":false
+        },
+        {
+            "name":"Wither Assault",
+            "active":true
+        },
+        {
+            "name":"Wizards",
+            "active":false
+        }
+        ]
+}

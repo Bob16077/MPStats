@@ -1,8 +1,8 @@
 const axios = require('axios');
 const Enmap = require('enmap');
 const { JSDOM } = require("jsdom");
-const DB = new Enmap({name: 'jlbs', dataDir: '/root/data/mpstats', autoEnsure: {}});
-const gamesDB = new Enmap({name: 'games', dataDir: '/root/data/mpstats'})
+const DB = new Enmap({name: 'jlbs', autoEnsure: {}, fetchAll: false});
+const gamesDB = new Enmap({name: 'games'});
 
 module.exports = {
     execute(time) {

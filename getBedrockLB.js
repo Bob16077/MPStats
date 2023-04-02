@@ -1,11 +1,8 @@
 const axios = require('axios');
-const Enmap = require('enmap');
 const { JSDOM } = require("jsdom");
-const DB = new Enmap({name: 'blbs', dataDir: '/root/data/mpstats', autoEnsure: {}});
-const gamesDB = new Enmap({name: 'games', dataDir: '/root/data/mpstats'})
 
 module.exports = {
-    execute(time) {
+    execute(time, gamesDB, DB) {
         return new Promise(async resolve => {
             let gameCount = 0;
             if (!time || time == undefined) time = Date.now();
@@ -30,6 +27,16 @@ module.exports = {
                 gameCount++;
 
                 DB.ensure(String(time));
+                if (results.length != 100) {
+                    for (i = 0; i < 100; i++) {
+                        if (!results[i]) {
+                            let value;
+                            if (!results[i]) value = {"position":i+1,"username":"x","wins":0};
+                            results.push(value);
+                        }
+                    };
+                }
+
                 DB.set(String(time), results, String(game));
                 results = null;
 
